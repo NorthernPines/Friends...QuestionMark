@@ -1,24 +1,94 @@
+const { existsSync } = require('fs');
+const { deleteUser } = require('../../../UPENN-VIRT-FSF-FT-07-2022-U-LOLC/18-NoSQL/01-Activities/26-Stu_CRUD-Subdoc/Solved/controllers/userController');
 const { User } = require('../models');
 
 module.exports = {
-  getPosts(req, res) {
-    Post.find()
-      .then((posts) => res.json(posts))
+  getUsers(req, res) {
+    User.find()
+      .then((users) => res.json(users))
       .catch((err) => res.status(500).json(err));
   },
-  getSinglePost(req, res) {
-    Post.findOne({ _id: req.params.postId })
-      .then((post) =>
-        !post
-          ? res.status(404).json({ message: 'No post with that ID' })
-          : res.json(post)
+  getOneUser(req, res) {
+    User.findOne({ _id: req.params.postId })
+      .then((user) =>
+        !user
+          ? res.status(404).json({ message: 'No user found with such ID' })
+          : res.json(user)
       )
       .catch((err) => res.status(500).json(err));
   },
-  // create a new post
-  createPost(req, res) {
-    Post.create(req.body)
-      .then((dbPostData) => res.json(dbPostData))
+  createUser(req, res) {
+    User.create(req.body)
+      .then((user) => res.status(200).json(user))
       .catch((err) => res.status(500).json(err));
   },
+  updateUser(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $set: req.body },
+      { runValidators: true, new: true }
+    )
+      .then((user) =>
+        !user
+          ? res.status(404).json({ message: 'No user found with such ID'})
+          : res.json(user)
+      )
+      .catch((err) => {
+        console.log(err);
+        res.status(500).json(err);
+      });
+  },
+  deleteUser(req, res) {
+    User.deleteOne({ _id: req.parmas.userId})
+      .then((user) => 
+        !user
+          ? res.status(404).json({ message: 'No user found with such ID'})
+          : res.status(200).json({ message: 'Said person has been removed'})
+      )
+      .catch((err) => res.status(500).json(err));
+  },
+  addFriend(req, res) {
+    // if friend exists
+      // if user exists
+        //add friend to users friend list
+      // else
+        //user not found
+    //else
+      //friend not found
+    User.countDocuments({_id: req.params.friendId}, function (err, count){ 
+      if(count>0){
+        User.findOneAndUpdate(
+          {_id: req.params.userId},
+          {$push: {friends: req.params.friendId}}
+        )
+          .then((user) => 
+            !user
+              ? res.status(404).json({ message: 'UserId not found'})
+              : res.status(200).json({ message: 'You are now friends'})
+          )
+          .catch((err) => res.status(500).json(err));
+      } else {
+        res.status(404).json({ message: 'FriendId not found'});
+      }
+    });
+  },
+  removeFriend(req, res) {
+    // should check if theyre friends on the platform
+    User.countDocuments({_id: req.params.friendId}, function (err, count){ 
+      if(count>0){
+        User.findOneAndUpdate(
+          {_id: req.params.userId},
+          {$pull: {friends: req.params.friendId}}
+        )
+          .then((user) => 
+            !user
+              ? res.status(404).json({ message: 'UserId not found'})
+              : res.status(200).json({ message: 'You are no longer friends'})
+          )
+          .catch((err) => res.status(500).json(err));
+      } else {
+        res.status(404).json({ message: 'FriendId not found'});
+      }
+    });
+  }
 };
