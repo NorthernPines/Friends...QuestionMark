@@ -8,7 +8,7 @@ module.exports = {
   },
   getOneUser(req, res) {
     User.findOne({ _id: req.params.userId })
-      .populate({ path: 'thoughts', select: '-__v'})
+      // .populate({ path: 'thoughts', select: '-__v'})
       // .populate('friends')
       .then((user) =>
         !user
