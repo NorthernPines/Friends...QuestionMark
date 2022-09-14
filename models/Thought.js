@@ -17,7 +17,8 @@ const reactionSchema = new Schema(
     },
     createdAt: {
       type: Date,
-      default: Date.now
+      default: Date.now,
+      get: formatDate
     }
 
   }
@@ -33,7 +34,8 @@ const thoughtSchema = new Schema(
     },
     createdAt: {
       type: Date,
-      default: Date.now
+      default: Date.now,
+      get: formatDate
     },
     username: {
       type: String,
@@ -48,6 +50,13 @@ const thoughtSchema = new Schema(
     id: false,
   }
 );
+
+function formatDate(badDate) {
+  const pts = badDate.split("");
+  const readableDate = pts[5] + pts[6] + '/' + pts[8] + pts[9] + '/' + pts[2] + pts[3] + ' ' + pts[11] + pts[12] + ':' + pts[14] + pts[15];
+  console.log("Test");
+  return readableDate;
+};
 
 thoughtSchema.virtual('reactionCount')
   .get(function () {
