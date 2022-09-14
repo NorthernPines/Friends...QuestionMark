@@ -5,15 +5,17 @@ const userSchema = new Schema(
   {
     username: {
       type: String,
-      require: true
+      require: true,
+      unique: true
     },
     email: {
       type: String,
-      require: true
+      require: true,
+      unique: true
     },
     thoughts: [
       {
-      type: Schema.Type.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'Thought'
       },
     ],

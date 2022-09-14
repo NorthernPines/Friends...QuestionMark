@@ -1,5 +1,3 @@
-const { existsSync } = require('fs');
-const { deleteUser } = require('../../../UPENN-VIRT-FSF-FT-07-2022-U-LOLC/18-NoSQL/01-Activities/26-Stu_CRUD-Subdoc/Solved/controllers/userController');
 const { User } = require('../models');
 
 module.exports = {
@@ -9,7 +7,9 @@ module.exports = {
       .catch((err) => res.status(500).json(err));
   },
   getOneUser(req, res) {
-    User.findOne({ _id: req.params.postId })
+    User.findOne({ _id: req.params.userId })
+      .populate({ path: 'thoughts', select: '-__v'})
+      // .populate('friends')
       .then((user) =>
         !user
           ? res.status(404).json({ message: 'No user found with such ID' })
@@ -39,7 +39,7 @@ module.exports = {
       });
   },
   deleteUser(req, res) {
-    User.deleteOne({ _id: req.parmas.userId})
+    User.deleteOne({ _id: req.params.userId})
       .then((user) => 
         !user
           ? res.status(404).json({ message: 'No user found with such ID'})

@@ -1,6 +1,28 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model, Types } = require('mongoose');
 
-// Schema to create Post model
+const reactionSchema = new Schema(
+  {
+    reactionId: {
+      type: Schema.Types.ObjectId,
+      default: () => new Types.ObjectId()
+    },
+    reactionBody: {
+      type: String,
+      require: true,
+      max: 280
+    },
+    username: {
+      type: String,
+      required: true
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+
+  }
+)
+
 const thoughtSchema = new Schema(
   {
     thoughtText: {
@@ -27,30 +49,6 @@ const thoughtSchema = new Schema(
   }
 );
 
-const reactionSchema = new Schema(
-  {
-    reactionId: {
-      type: Schema.Types.ObjectId,
-      default: new ObjectId
-    },
-    reactionBody: {
-      type: String,
-      require: true,
-      max: 280
-    },
-    username: {
-      type: String,
-      required: true
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now
-    }
-
-  }
-)
-
-// Create a virtual property `commentCount` that gets the amount of comments per post
 thoughtSchema.virtual('reactionCount')
   .get(function () {
     return this.reactions.length;
